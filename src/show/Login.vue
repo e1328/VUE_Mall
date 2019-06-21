@@ -71,6 +71,7 @@ $(function () {
   // eslint-disable-next-line no-undef
   $('#forget').click(function () {
     alert('这个功能没做，哈哈~')
+    // try
   })
 })
 </script>
