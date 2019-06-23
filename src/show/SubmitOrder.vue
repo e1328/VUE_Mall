@@ -127,49 +127,41 @@
           <div class="modal-body">
             <div>
               <span>地址信息：</span>
-              <select>
-                <option value ="volvo">北京</option>
-                <option value ="saab">天津</option>
-                <option value="opel">河北省</option>
-                <option value="audi">山西省</option>
+              <select v-model="provinces" @change="findAllCitiesByProvincesId(provinces)">
+                <option :value ="item.provinceid" v-for="item in provincesList">{{item.province}}</option>
               </select>
-              <select>
-                <option value ="volvo">张家界市</option>
-                <option value ="saab">娄底市</option>
-                <option value="opel">长沙市</option>
-                <option value="audi">广州市</option>
+              <select v-model="cities" @change="findAllAreasByCitiesId(cities)">
+                <option :value ="item.cityid" v-for="item in citiesList">{{item.city}}</option>
               </select>
-              <select>
-                <option value ="volvo">永定区</option>
-                <option value ="saab">新化县</option>
-                <option value="opel">涟源县</option>
-                <option value="audi">阿达</option>
+              <select v-model="areas">
+                <option :value ="item.areaid" v-for="item in areasList">{{item.area}}</option>
               </select>
             </div>
             <div>
               <span>详细地址：</span>
-              <input type="text">
+              <input type="text" v-model="content">
             </div>
             <div>
               <span>邮政编码：</span>
-              <input type="text">
+              <input type="text" v-model="zip_code">
             </div>
             <div>
               <span>收货人姓名：</span>
-              <input type="text">
+              <input type="text" v-model="name2">
             </div>
             <div>
               <span>手机号码：</span>
-              <input type="text">
+              <input type="text" v-model="phone2">
             </div>
           </div>
           <div class="modal-footer">
+            <button type="button" class="btn btn-default btn-sm" @click="save">保存</button>
             <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
-            <button type="button" class="btn btn-default btn-sm">保存</button>
           </div>
         </div>
       </div>
     </div>
+    {{areas}}
   </div>
 </template>
 
@@ -183,7 +175,18 @@ export default {
       sum_price: 0,
       sum_amount: 0,
       orders: {},
-      num: '' + Math.round(Math.random() * 8999999999 + 1000000000)
+      num: '' + Math.round(Math.random() * 8999999999 + 1000000000),
+      provinces: '',
+      provincesList: [],
+      cities: '',
+      citiesList: [],
+      areas: '',
+      areasList: [],
+      content: '',
+      zip_code: '',
+      name2: '',
+      phone2: '',
+      address: {}
     }
   },
   methods: {
@@ -199,7 +202,8 @@ export default {
         })
         // eslint-disable-next-line handle-callback-err
         .catch(error => {
-          alert('失败')
+          console.log(error)
+          alert('fail')
         })
     },
     total: function () {
@@ -240,6 +244,57 @@ export default {
           alert('提交失败')
         })
     },
+    findAllProvinces: function () {
+      this.axios({
+        method: 'get',
+        url: 'http://localhost:8080/provinces/findAll'
+      })
+        .then(response => {
+          this.provincesList = response.data
+        })
+    },
+    findAllCitiesByProvincesId: function (id) {
+      this.axios({
+        method: 'get',
+        url: 'http://localhost:8080/cities/findAllByProvincesId?id=' + id
+      })
+        .then(response => {
+          this.citiesList = response.data
+        })
+    },
+    findAllAreasByCitiesId: function (id) {
+      this.axios({
+        method: 'get',
+        url: 'http://localhost:8080/areas/findAllByCitiesId?id=' + id
+      })
+        .then(response => {
+          this.areasList = response.data
+        })
+    },
+    save: function () {
+      this.address = {
+        provinces: parseInt(this.provinces),
+        cities: parseInt(this.cities),
+        areas: parseInt(this.areas),
+        content: this.content,
+        zip_code: this.zip_code,
+        name2: this.name2,
+        phone2: this.phone2
+      }
+      this.axios({
+        method: 'post',
+        url: 'http://localhost:8080/address/add',
+        data: this.address
+      })
+        .then(response => {
+          alert('新增收货地址成功')
+        })
+        // eslint-disable-next-line handle-callback-err
+        .catch(error => {
+          console.log(error)
+          alert('新增收货地址失败')
+        })
+    },
     logout: function () {
       sessionStorage.removeItem('store')
     }
@@ -247,6 +302,7 @@ export default {
   mounted () {
     this.name = this.$store.state.name
     this.findOrderList()
+    this.findAllProvinces()
   }
 }
 </script>
