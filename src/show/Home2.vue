@@ -467,7 +467,7 @@
           <span class="h4">商品抢购</span>&nbsp;&nbsp;&nbsp;
           <span class="h6">距结束00:15:05</span>
           <span class="h6 pull-right" style="margin: 6px 14px 0 0">更多</span>
-          <span class="h6 pull-right btn btn-xs" style="position: relative;top: -8px;right: 6px;" @click="changePage">换一批</span>
+          <span class="h6 pull-right btn btn-xs" style="position: relative;top: -8px;right: 6px;" @click="findSeckillGoodsList">换一批</span>
         </div>
         <table class="table table-bordered">
           <tbody>
@@ -1139,7 +1139,7 @@ export default {
           this.list2 = response.data.rows
         })
     },
-    findSeckillGoodsList: function (page) {
+    findSeckillGoodsList: function () {
       this.axios({
         method: 'get',
         url: 'http://localhost:8080/seckill/findList'
@@ -1172,18 +1172,18 @@ export default {
     this.findByAdType(1)
     this.findPage1()
     this.findPage2()
-    this.findSeckillGoodsList(1)
+    this.findSeckillGoodsList()
     this.name = this.$store.state.name
   }
 }
 $(function () {
   $('.nav4_div2 div').hide()
   $('.nav4_div1 ul li').hover(function () {
-    $('.nav4_div2').css('z-index', 100)
+    // $('.nav4_div2').css('z-index', 100)
     $(this).toggleClass('color')
     $('.nav4_div2').find('div').eq($(this).index()).show()
   }, function () {
-    $('.nav4_div2').css('z-index', 99)
+    // $('.nav4_div2').css('z-index', 99)
     $(this).toggleClass('color')
     $('.nav4_div2').find('div').eq($(this).index()).hide()
   })
@@ -1245,7 +1245,7 @@ $(function () {
   }
   .nav4 .nav4_div2{
     position: absolute;
-    z-index: 99;
+    z-index: 100;
     right: 0px;
   }
   .nav4 .nav4_div3{
